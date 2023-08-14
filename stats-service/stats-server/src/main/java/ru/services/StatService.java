@@ -1,0 +1,33 @@
+package ru.services;
+
+import dtos.EndpointHitDto;
+import dtos.ViewStatsDto;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Repository;
+import ru.mappers.EndpointHitMapper;
+import ru.models.EndpointHit;
+import ru.repositories.EndpointHitRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+@AllArgsConstructor
+public class StatService {
+    private EndpointHitRepository hitRepository;
+
+    public EndpointHitDto saveHit(EndpointHitDto hitDto) {
+        EndpointHit endpointHit = hitRepository.save(EndpointHitMapper.toEndpointHit(hitDto));
+        return EndpointHitMapper.toEndpointHitDto(endpointHit);
+    }
+
+    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (uris != null && unique != null && unique)
+            return hitRepository.findAllByHitDateUnique(start, end, uris);
+
+        if (uris != null)
+            return hitRepository.findAllByHitDate(start, end, uris);
+
+        return hitRepository.findAllByHitDate(start, end);
+    }
+}
