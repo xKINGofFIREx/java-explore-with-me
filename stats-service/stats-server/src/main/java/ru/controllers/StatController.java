@@ -3,7 +3,6 @@ package ru.controllers;
 import dtos.EndpointHitDto;
 import dtos.ViewStatsDto;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.services.StatService;
 
@@ -15,9 +14,9 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
-@Slf4j
 public class StatController {
     private StatService statService;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @PostMapping("/hit")
     public EndpointHitDto saveHit(@RequestBody EndpointHitDto hitDto) {
@@ -34,8 +33,8 @@ public class StatController {
         end = URLDecoder.decode(end, StandardCharsets.UTF_8);
 
         return statService.getStats(
-                LocalDateTime.parse(start, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                LocalDateTime.parse(end, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                LocalDateTime.parse(start, FORMATTER),
+                LocalDateTime.parse(end, FORMATTER),
                 uris, unique
         );
     }
