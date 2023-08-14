@@ -25,7 +25,7 @@ public class BaseClient {
 
     public BaseClient(RestTemplateBuilder builder) {
         this.rest = builder
-                .uriTemplateHandler(new DefaultUriBuilderFactory("http://localhost:9091"))
+                .uriTemplateHandler(new DefaultUriBuilderFactory("http://stats-server:9091"))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 .build();
     }

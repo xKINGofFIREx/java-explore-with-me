@@ -15,6 +15,8 @@ services:
         condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+    networks:
+      - net
 
   stats-dtos:
     build: ./stats-service/stats-dtos
@@ -38,6 +40,8 @@ services:
         condition: service_started
     environment:
       - EWM_STAT_SERVER_URL=http://stats-server:9091
+    networks:
+      - net
 
   ewm-service:
     build: ./main-service
@@ -65,3 +69,10 @@ services:
     environment:
       POSTGRES_USER: ewm
       POSTGRES_PASSWORD: ewm
+    networks:
+      - net
+
+
+networks:
+  net:
+    driver: "bridge"
