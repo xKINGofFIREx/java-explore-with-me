@@ -1,6 +1,6 @@
 package dtos.main.request;
 
-import dtos.main.Location;
+import dtos.main.LocationDto;
 import dtos.main.StateAction;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +16,7 @@ public class UpdateEventAdminRequest {
     private long categoryId;
     private String description;
     private LocalDateTime eventDate;
-    private Location location;
+    private LocationDto locationDto;
     private boolean paid;
     private int participantLimit;
     private boolean requestModeration;

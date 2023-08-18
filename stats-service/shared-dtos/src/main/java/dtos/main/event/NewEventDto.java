@@ -1,6 +1,6 @@
 package dtos.main.event;
 
-import dtos.main.Location;
+import dtos.main.LocationDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ public class NewEventDto {
     private long categoryId;
     private String description;
     private LocalDateTime eventDate;
-    private Location location;
+    private LocationDto locationDto;
     private boolean paid;
     private int participantLimit;
     private boolean requestModeration;

@@ -1,6 +1,6 @@
 package dtos.main.event;
 
-import dtos.main.Location;
+import dtos.main.LocationDto;
 import dtos.main.State;
 import dtos.main.category.CategoryDto;
 import dtos.main.user.UserShortDto;
@@ -22,7 +22,7 @@ public class EventFullDto {
     private String description;
     private LocalDateTime eventDate;
     private UserShortDto initiator;
-    private Location location;
+    private LocationDto locationDto;
     private int participantLimit;
     private LocalDateTime publishedOn;
     private boolean requestModeration;
