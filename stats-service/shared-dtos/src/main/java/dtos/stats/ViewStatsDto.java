@@ -1,4 +1,4 @@
-package dtos;
+package dtos.stats;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

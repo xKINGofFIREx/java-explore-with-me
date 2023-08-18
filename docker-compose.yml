@@ -11,19 +11,10 @@ services:
     depends_on:
       ewm-db:
         condition: service_started
-      stats-dtos:
-        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
     networks:
       - net
-
-  stats-dtos:
-    build: ./stats-service/stats-dtos
-    image:
-      stats-dtos
-    container_name:
-      stats-dtos
 
   stats-client:
     build: ./stats-service/stats-client
@@ -34,8 +25,6 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      stats-dtos:
-        condition: service_started
       stats-server:
         condition: service_started
     environment:
@@ -52,8 +41,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      ewm-db:
-        condition: service_started
       stats-client:
         condition: service_started
     environment:

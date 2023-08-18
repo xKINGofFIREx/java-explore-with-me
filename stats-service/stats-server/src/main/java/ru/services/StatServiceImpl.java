@@ -1,7 +1,7 @@
 package ru.services;
 
-import dtos.EndpointHitDto;
-import dtos.ViewStatsDto;
+import dtos.stats.EndpointHitDto;
+import dtos.stats.ViewStatsDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.mappers.EndpointHitMapper;

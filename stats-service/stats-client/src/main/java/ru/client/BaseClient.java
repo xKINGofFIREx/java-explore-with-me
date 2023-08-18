@@ -1,6 +1,6 @@
 package ru.client;
 
-import dtos.EndpointHitDto;
+import dtos.stats.EndpointHitDto;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

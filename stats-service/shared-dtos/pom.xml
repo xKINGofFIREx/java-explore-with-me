@@ -7,8 +7,8 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>stats-dtos</artifactId>
-    <name>stats-dtos</name>
+    <artifactId>shared-dtos</artifactId>
+    <name>shared-dtos</name>
     <url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
