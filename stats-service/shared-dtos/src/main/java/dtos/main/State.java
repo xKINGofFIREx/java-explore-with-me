@@ -1,4 +1,4 @@
-package dtos;
+package dtos.main;
 
 public enum State {
     PENDING,

@@ -1,7 +1,6 @@
-package dtos.event;
+package dtos.main.event;
 
-import dtos.category.CategoryDto;
-import dtos.user.UserShortDto;
+import dtos.main.Location;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,14 +10,14 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventShortDto {
-    private long id;
+public class NewEventDto {
     private String annotation;
-    private CategoryDto categoryDto;
-    private long confirmedRequests;
+    private long categoryId;
+    private String description;
     private LocalDateTime eventDate;
-    private UserShortDto initiator;
+    private Location location;
     private boolean paid;
+    private int participantLimit;
+    private boolean requestModeration;
     private String title;
-    private long views;
 }

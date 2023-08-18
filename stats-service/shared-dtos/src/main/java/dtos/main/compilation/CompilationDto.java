@@ -1,13 +1,14 @@
-package dtos.category;
+package dtos.main.compilation;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class CategoryDto {
+@AllArgsConstructor
+public class CompilationDto {
     private long id;
-    private String name;
+    private boolean pinned;
+    private String title;
 }

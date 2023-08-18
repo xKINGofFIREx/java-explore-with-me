@@ -1,9 +1,9 @@
-package dtos.event;
+package dtos.main.event;
 
-import dtos.Location;
-import dtos.State;
-import dtos.user.UserShortDto;
-import dtos.category.CategoryDto;
+import dtos.main.Location;
+import dtos.main.State;
+import dtos.main.category.CategoryDto;
+import dtos.main.user.UserShortDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

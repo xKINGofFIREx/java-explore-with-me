@@ -1,13 +1,13 @@
-package dtos;
+package dtos.main.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class Location {
-    private float lat;
-    private float lon;
+@NoArgsConstructor
+public class UserShortDto {
+    private long id;
+    private String name;
 }
