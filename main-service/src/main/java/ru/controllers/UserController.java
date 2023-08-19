@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.services.user.UserService;
 
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @AllArgsConstructor
@@ -16,10 +15,10 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/admin/users")
-    public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
-                                                 @RequestParam(required = false, defaultValue = "0") int from,
-                                                 @RequestParam(required = false, defaultValue = "10") int size) {
-        return userService.getUsers(ids, from, size);
+    public ResponseEntity<List<UserDto>> getUsers(@RequestParam(required = false) List<Long> ids,
+                                                  @RequestParam(required = false, defaultValue = "0") int from,
+                                                  @RequestParam(required = false, defaultValue = "10") int size) {
+        return new ResponseEntity<>(userService.getUsers(ids, from, size), HttpStatus.OK);
     }
 
     @PostMapping("/admin/users")

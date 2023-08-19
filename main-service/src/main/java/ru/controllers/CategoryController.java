@@ -1,32 +1,45 @@
 package ru.controllers;
 
+import dtos.main.category.CategoryDto;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.exceptions.NotFoundException;
+import ru.services.category.CategoryService;
+
+import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class CategoryController {
+    private final CategoryService categoryService;
 
     @GetMapping("/categories")
-    public void getCategories() {
-
+    public ResponseEntity<List<CategoryDto>> getCategories(@RequestParam(required = false, defaultValue = "0") int from,
+                                                           @RequestParam(required = false, defaultValue = "10") int size) {
+        return new ResponseEntity<>(categoryService.getCategories(from, size), HttpStatus.OK);
     }
 
     @GetMapping("/categories/{catId}")
-    public void getCategoryById(@PathVariable("catId") long catId) {
-
+    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable("catId") long catId) throws NotFoundException {
+        return new ResponseEntity<>(categoryService.getCategoryById(catId), HttpStatus.OK);
     }
 
     @PostMapping("/admin/categories")
-    public void createCategory() {
-
+    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
+        return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/admin/categories/{catId}")
-    public void removeCategoryById(@PathVariable("catId") long catId) {
-
+    public ResponseEntity<Object> removeCategoryById(@PathVariable("catId") long catId) throws NotFoundException {
+        categoryService.removeCategoryById(catId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PatchMapping("/admin/categories/{catId}")
-    public void updateCategoryById(@PathVariable("catId") long catId) {
-
+    public ResponseEntity<CategoryDto> updateCategoryById(@PathVariable("catId") long catId,
+                                                          @RequestBody CategoryDto categoryDto) throws NotFoundException {
+        return new ResponseEntity<>(categoryService.updateCategoryById(catId, categoryDto), HttpStatus.OK);
     }
 }
