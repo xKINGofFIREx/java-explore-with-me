@@ -117,6 +117,10 @@ public class EventServiceImpl implements EventService {
             event.setLocation(location);
 
         }
+        if (request.isPaid() != event.isPaid())
+            event.setPaid(request.isPaid());
+        if (request.getParticipantLimit() != event.getParticipantLimit())
+            event.setParticipantLimit(request.getParticipantLimit());
         if (request.isRequestModeration() != event.isRequestModeration())
             event.setRequestModeration(request.isRequestModeration());
         if (request.getTitle() != null)

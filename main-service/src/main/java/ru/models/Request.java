@@ -31,5 +31,5 @@ public class Request {
     private LocalDateTime created = LocalDateTime.now();
 
     @Column(name = "status")
-    private Status status;
+    private Status status = Status.PENDING;
 }

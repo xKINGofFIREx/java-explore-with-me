@@ -1,6 +1,7 @@
 package dtos.main.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import dtos.main.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,5 @@ public class ParticipationRequestDto {
     private LocalDateTime created;
     private long event;
     private long requester;
-    private String status;
+    private Status status;
 }
