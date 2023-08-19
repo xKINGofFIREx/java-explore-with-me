@@ -28,7 +28,7 @@ public class Request {
     private User requester;
 
     @Column(name = "created")
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
 
     @Column(name = "status")
     private Status status;

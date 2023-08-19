@@ -12,4 +12,9 @@ public class ControllerExceptionHandler {
     public ResponseEntity<Object> handleNotFoundException() {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<Object> handleConflictException() {
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
 }

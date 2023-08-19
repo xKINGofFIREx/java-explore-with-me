@@ -1,6 +1,7 @@
 package ru.mappers;
 
 import dtos.main.user.UserDto;
+import dtos.main.user.UserShortDto;
 import ru.models.User;
 
 import java.util.ArrayList;
@@ -22,6 +23,10 @@ public class UserMapper {
                 userDto.getName(),
                 userDto.getEmail()
         );
+    }
+
+    public static UserShortDto toUserShortDto(User user) {
+        return new UserShortDto(user.getId(), user.getName());
     }
 
     public static List<UserDto> toUserDtos(List<User> users) {

@@ -1,5 +1,6 @@
 package dtos.main.event;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dtos.main.category.CategoryDto;
 import dtos.main.user.UserShortDto;
 import lombok.AllArgsConstructor;
@@ -14,8 +15,9 @@ import java.time.LocalDateTime;
 public class EventShortDto {
     private long id;
     private String annotation;
-    private CategoryDto categoryDto;
+    private CategoryDto category;
     private long confirmedRequests;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
     private UserShortDto initiator;
     private boolean paid;

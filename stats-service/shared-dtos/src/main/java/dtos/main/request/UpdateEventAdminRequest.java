@@ -1,5 +1,6 @@
 package dtos.main.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import dtos.main.LocationDto;
 import dtos.main.StateAction;
 import lombok.AllArgsConstructor;
@@ -13,10 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UpdateEventAdminRequest {
     private String annotation;
-    private long categoryId;
+    private long category;
     private String description;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
-    private LocationDto locationDto;
+    private LocationDto location;
     private boolean paid;
     private int participantLimit;
     private boolean requestModeration;

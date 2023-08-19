@@ -48,7 +48,10 @@ public class CategoryServiceImpl implements CategoryService {
         if (!categoryRepository.existsById(catId))
             throw new NotFoundException("Категория не найдена или недоступна");
 
-        Category category = categoryRepository.save(CategoryMapper.toCategory(categoryDto));
-        return CategoryMapper.toCategoryDto(category);
+        Category category = categoryRepository.getReferenceById(catId);
+        if (categoryDto.getName() != null)
+            category.setName(categoryDto.getName());
+
+        return CategoryMapper.toCategoryDto(categoryRepository.save(category));
     }
 }
