@@ -8,6 +8,7 @@ import ru.mappers.EndpointHitMapper;
 import ru.models.EndpointHit;
 import ru.repositories.EndpointHitRepository;
 
+import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class StatServiceImpl implements StatService {
     }
 
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        if (start.isAfter(end))
+            throw new ValidationException();
         if (uris != null && unique != null && unique)
             return hitRepository.findAllByHitDateUnique(start, end, uris);
 
