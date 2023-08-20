@@ -119,10 +119,8 @@ public class EventServiceImpl implements EventService {
         }
         if (request.isPaid() != event.isPaid())
             event.setPaid(request.isPaid());
-        if (request.getParticipantLimit() != event.getParticipantLimit())
+        if (request.getParticipantLimit() != 0 && request.getParticipantLimit() != event.getParticipantLimit())
             event.setParticipantLimit(request.getParticipantLimit());
-        if (request.isRequestModeration() != event.isRequestModeration())
-            event.setRequestModeration(request.isRequestModeration());
         if (request.getTitle() != null)
             event.setTitle(request.getTitle());
         event.setState(request.getStateAction() == StateAction.PUBLISH_EVENT ? State.PUBLISHED : State.CANCELED);
