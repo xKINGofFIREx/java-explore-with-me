@@ -31,5 +31,6 @@ public class Request {
     private LocalDateTime created = LocalDateTime.now();
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
 }

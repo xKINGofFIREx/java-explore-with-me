@@ -9,6 +9,7 @@ import ru.mappers.CategoryMapper;
 import ru.models.Category;
 import ru.repositories.CategoryRepository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository

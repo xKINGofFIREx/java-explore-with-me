@@ -2,6 +2,7 @@ package ru.services.event;
 
 import dtos.main.State;
 import dtos.main.StateAction;
+import dtos.main.Status;
 import dtos.main.event.EventFullDto;
 import dtos.main.event.EventShortDto;
 import dtos.main.event.NewEventDto;
@@ -43,9 +44,9 @@ public class EventServiceImpl implements EventService {
     public List<EventShortDto> getEvents(String text, List<Long> categoryIds, Boolean paid,
                                          LocalDateTime rangeStart, LocalDateTime rangeEnd,
                                          boolean onlyAvailable, Sort sort, int from, int size) {
+
         Pageable pageable = PageRequest.of(from, size);
-        LocalDateTime now = LocalDateTime.now();
-        Stream<Event> stream = eventRepository.getPublicEvents(now, pageable).stream()
+        Stream<Event> stream = eventRepository.getPublicEvents(State.PUBLISHED, pageable).stream()
                 .filter(e -> !onlyAvailable || e.getParticipantLimit() > e.getConfirmedRequests())
                 .filter(e -> paid != null && paid == e.isPaid())
                 .filter(e -> text != null && (e.getAnnotation().toLowerCase().contains(text.toLowerCase())
@@ -59,8 +60,7 @@ public class EventServiceImpl implements EventService {
         if (sort == Sort.VIEWS)
             stream = stream.sorted(Comparator.comparing(Event::getViews));
 
-        List<EventShortDto> eventShortDtos = EventMapper.toEventShortDtos(stream.collect(Collectors.toList()));
-        return eventShortDtos;
+        return EventMapper.toEventShortDtos(stream.collect(Collectors.toList()));
     }
 
     @Override
