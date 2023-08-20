@@ -1,6 +1,7 @@
 package ru.services.category;
 
 import dtos.main.category.CategoryDto;
+import dtos.main.category.NewCategoryDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
@@ -30,8 +31,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto createCategory(CategoryDto categoryDto) {
-        Category category = categoryRepository.save(CategoryMapper.toCategory(categoryDto));
+    public CategoryDto createCategory(NewCategoryDto newCategoryDto) {
+        Category category = categoryRepository.save(CategoryMapper.toCategory(newCategoryDto));
         return CategoryMapper.toCategoryDto(category);
     }
 

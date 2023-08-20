@@ -10,7 +10,6 @@ import org.springframework.stereotype.Repository;
 import ru.exceptions.NotFoundException;
 import ru.mappers.CompilationMapper;
 import ru.models.Compilation;
-import ru.models.Event;
 import ru.repositories.CompilationRepository;
 import ru.repositories.EventRepository;
 
@@ -39,9 +38,11 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto createCompilation(NewCompilationDto newCompilationDto) {
-        List<Event> events = eventRepository.findAllById(newCompilationDto.getEvents());
+
         Compilation compilation = CompilationMapper.toCompilation(newCompilationDto);
-        compilation.setEvents(events);
+        if (newCompilationDto.getEvents() != null)
+            compilation.setEvents(eventRepository.findAllById(newCompilationDto.getEvents()));
+
         return CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 
@@ -59,7 +60,8 @@ public class CompilationServiceImpl implements CompilationService {
             throw new NotFoundException("Подборка не найдена или недоступна");
         Compilation compilation = compilationRepository.getReferenceById(compId);
         compilation.setTitle(updateCompilationRequest.getTitle());
-        compilation.setEvents(eventRepository.findAllById(updateCompilationRequest.getEvents()));
+        if (updateCompilationRequest.getEvents() != null)
+            compilation.setEvents(eventRepository.findAllById(updateCompilationRequest.getEvents()));
         return CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
     }
 }

@@ -1,6 +1,7 @@
 package ru.controllers;
 
 import dtos.main.category.CategoryDto;
+import dtos.main.category.NewCategoryDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.exceptions.NotFoundException;
 import ru.services.category.CategoryService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,8 +29,8 @@ public class CategoryController {
     }
 
     @PostMapping("/admin/categories")
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
-        return new ResponseEntity<>(categoryService.createCategory(categoryDto), HttpStatus.CREATED);
+    public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody NewCategoryDto newCategoryDto) {
+        return new ResponseEntity<>(categoryService.createCategory(newCategoryDto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/admin/categories/{catId}")
@@ -39,7 +41,7 @@ public class CategoryController {
 
     @PatchMapping("/admin/categories/{catId}")
     public ResponseEntity<CategoryDto> updateCategoryById(@PathVariable("catId") long catId,
-                                                          @RequestBody CategoryDto categoryDto) throws NotFoundException {
+                                                          @Valid @RequestBody CategoryDto categoryDto) throws NotFoundException {
         return new ResponseEntity<>(categoryService.updateCategoryById(catId, categoryDto), HttpStatus.OK);
     }
 }

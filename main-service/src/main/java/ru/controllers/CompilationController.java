@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.exceptions.NotFoundException;
 import ru.services.compilation.CompilationService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -30,7 +31,7 @@ public class CompilationController {
     }
 
     @PostMapping("/admin/compilations")
-    public ResponseEntity<CompilationDto> createCompilation(@RequestBody NewCompilationDto newCompilationDto) {
+    public ResponseEntity<CompilationDto> createCompilation(@Valid @RequestBody NewCompilationDto newCompilationDto) {
         return new ResponseEntity<>(compilationService.createCompilation(newCompilationDto), HttpStatus.CREATED);
     }
 
@@ -42,7 +43,7 @@ public class CompilationController {
 
     @PatchMapping("/admin/compilations/{compId}")
     public ResponseEntity<CompilationDto> updateCompilationById(@PathVariable("compId") long compId,
-                                                                @RequestBody UpdateCompilationRequest updateCompilationRequest) throws NotFoundException {
+                                                                @Valid @RequestBody UpdateCompilationRequest updateCompilationRequest) throws NotFoundException {
         return new ResponseEntity<>(compilationService.updateCompilationById(compId, updateCompilationRequest), HttpStatus.OK);
     }
 }

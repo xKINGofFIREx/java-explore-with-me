@@ -1,6 +1,7 @@
 package ru.mappers;
 
 import dtos.main.category.CategoryDto;
+import dtos.main.category.NewCategoryDto;
 import ru.models.Category;
 
 import java.util.ArrayList;
@@ -14,10 +15,10 @@ public class CategoryMapper {
                 category.getName());
     }
 
-    public static Category toCategory(CategoryDto categoryDto) {
+    public static Category toCategory(NewCategoryDto newCategoryDto) {
         return new Category(
-                categoryDto.getId(),
-                categoryDto.getName());
+                0,
+                newCategoryDto.getName());
     }
 
     public static List<CategoryDto> toCategoryDtos(List<Category> categories) {

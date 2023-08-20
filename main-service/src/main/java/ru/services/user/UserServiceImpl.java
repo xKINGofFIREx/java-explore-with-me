@@ -1,5 +1,6 @@
 package ru.services.user;
 
+import dtos.main.request.NewUserRequest;
 import dtos.main.user.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -9,7 +10,9 @@ import ru.mappers.UserMapper;
 import ru.models.User;
 import ru.repositories.UserRepository;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @AllArgsConstructor
@@ -18,16 +21,20 @@ public class UserServiceImpl implements UserService {
 
     public List<UserDto> getUsers(List<Long> ids, int from, int size) {
         Pageable page = PageRequest.of(from, size);
+        List<User> users;
 
         if (ids != null)
-            return UserMapper.toUserDtos(userRepository.findAllByIds(ids, page).toList());
+            users = userRepository.findAllByIds(ids, page).toList();
+        else
+            users = userRepository.findAll(page).toList();
 
-        return UserMapper.toUserDtos(userRepository.findAll(page).toList());
+        users = users.stream().sorted(Comparator.comparing(User::getId)).collect(Collectors.toList());
+        return UserMapper.toUserDtos(users);
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
-        User user = userRepository.save(UserMapper.toUser(userDto));
+    public UserDto createUser(NewUserRequest newUserRequest) {
+        User user = userRepository.save(UserMapper.toUser(newUserRequest));
         return UserMapper.toUserDto(user);
     }
 

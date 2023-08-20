@@ -6,26 +6,29 @@ import dtos.main.event.EventShortDto;
 import dtos.main.event.NewEventDto;
 import dtos.main.request.UpdateEventAdminRequest;
 import dtos.main.request.UpdateEventUserRequest;
+import dtos.stats.EndpointHitDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import ru.exceptions.ConflictException;
 import ru.exceptions.NotFoundException;
 import ru.models.Sort;
 import ru.services.event.EventService;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
 @AllArgsConstructor
 public class EventController {
     private final EventService eventService;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final String clientUrl = "http://stats-client:9090/hit";
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/events")
     public ResponseEntity<List<EventShortDto>> getEvents(@RequestParam(required = false) String text,
@@ -37,18 +40,22 @@ public class EventController {
                                                          @RequestParam(required = false) Sort sort,
                                                          @RequestParam(required = false, defaultValue = "0") int from,
                                                          @RequestParam(required = false, defaultValue = "10") int size) {
-        rangeStart = URLDecoder.decode(rangeStart, StandardCharsets.UTF_8);
-        rangeEnd = URLDecoder.decode(rangeEnd, StandardCharsets.UTF_8);
+
+        restTemplate.postForEntity(clientUrl,
+                new EndpointHitDto("ewm-main-service", "/events", ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr(),
+                        LocalDateTime.now()), EndpointHitDto.class);
         return new ResponseEntity<>(
-                eventService.getEvents(text, categories, paid,
-                        LocalDateTime.parse(rangeStart, FORMATTER), LocalDateTime.parse(rangeEnd, FORMATTER),
-                        onlyAvailable, sort, from, size),
-                HttpStatus.OK
-        );
+                eventService.getEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size),
+                HttpStatus.OK);
     }
 
     @GetMapping("/events/{eventId}")
     public ResponseEntity<EventFullDto> getEventById(@PathVariable("eventId") long eventId) throws NotFoundException {
+        restTemplate.postForObject(clientUrl,
+                new EndpointHitDto("ewm-main-service", "/events/" + eventId, ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes())
+                        .getRequest().getRemoteAddr(),
+                        LocalDateTime.now()), EndpointHitDto.class);
         return new ResponseEntity<>(eventService.getEventById(eventId), HttpStatus.OK);
     }
 
@@ -60,18 +67,15 @@ public class EventController {
                                                            @RequestParam(required = false) String rangeEnd,
                                                            @RequestParam(required = false, defaultValue = "0") int from,
                                                            @RequestParam(required = false, defaultValue = "10") int size) {
-        rangeStart = URLDecoder.decode(rangeStart, StandardCharsets.UTF_8);
-        rangeEnd = URLDecoder.decode(rangeEnd, StandardCharsets.UTF_8);
+
         return new ResponseEntity<>(
-                eventService.searchEvents(users, states, categories,
-                        LocalDateTime.parse(rangeStart, FORMATTER), LocalDateTime.parse(rangeEnd, FORMATTER), from, size),
-                HttpStatus.OK
-        );
+                eventService.searchEvents(users, states, categories, rangeStart, rangeEnd, from, size),
+                HttpStatus.OK);
     }
 
     @PatchMapping("/admin/events/{eventId}")
     public ResponseEntity<EventFullDto> updateEventById(@PathVariable("eventId") long eventId,
-                                                        @RequestBody UpdateEventAdminRequest updateEventAdminRequest) throws NotFoundException, ConflictException {
+                                                        @Valid @RequestBody UpdateEventAdminRequest updateEventAdminRequest) throws NotFoundException, ConflictException {
 
         return new ResponseEntity<>(eventService.updateEventById(eventId, updateEventAdminRequest), HttpStatus.OK);
     }
@@ -85,7 +89,7 @@ public class EventController {
 
     @PostMapping("/users/{userId}/events")
     public ResponseEntity<EventFullDto> createUserEvent(@PathVariable("userId") long userId,
-                                                        @RequestBody NewEventDto newEventDto) throws ConflictException {
+                                                        @Valid @RequestBody NewEventDto newEventDto) throws ConflictException {
         return new ResponseEntity<>(eventService.createUserEvent(userId, newEventDto), HttpStatus.CREATED);
     }
 
@@ -98,7 +102,7 @@ public class EventController {
     @PatchMapping("/users/{userId}/events/{eventId}")
     public ResponseEntity<EventFullDto> updateUserEventById(@PathVariable("userId") long userId,
                                                             @PathVariable("eventId") long eventId,
-                                                            @RequestBody UpdateEventUserRequest updateEventUserRequest) throws ConflictException, NotFoundException {
+                                                            @Valid @RequestBody UpdateEventUserRequest updateEventUserRequest) throws ConflictException, NotFoundException {
         return new ResponseEntity<>(eventService.updateUserEventById(userId, eventId, updateEventUserRequest), HttpStatus.OK);
     }
 }

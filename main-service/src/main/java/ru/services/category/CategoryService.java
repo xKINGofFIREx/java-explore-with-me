@@ -1,6 +1,7 @@
 package ru.services.category;
 
 import dtos.main.category.CategoryDto;
+import dtos.main.category.NewCategoryDto;
 import ru.exceptions.NotFoundException;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface CategoryService {
 
     CategoryDto getCategoryById(long catId) throws NotFoundException;
 
-    CategoryDto createCategory(CategoryDto categoryDto);
+    CategoryDto createCategory(NewCategoryDto newCategoryDto);
 
     void removeCategoryById(long catId) throws NotFoundException;
 

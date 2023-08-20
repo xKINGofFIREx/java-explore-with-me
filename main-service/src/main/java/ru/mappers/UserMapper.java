@@ -1,5 +1,6 @@
 package ru.mappers;
 
+import dtos.main.request.NewUserRequest;
 import dtos.main.user.UserDto;
 import dtos.main.user.UserShortDto;
 import ru.models.User;
@@ -17,11 +18,11 @@ public class UserMapper {
         );
     }
 
-    public static User toUser(UserDto userDto) {
+    public static User toUser(NewUserRequest newUserRequest) {
         return new User(
-                userDto.getId(),
-                userDto.getName(),
-                userDto.getEmail()
+                0,
+                newUserRequest.getName(),
+                newUserRequest.getEmail()
         );
     }
 

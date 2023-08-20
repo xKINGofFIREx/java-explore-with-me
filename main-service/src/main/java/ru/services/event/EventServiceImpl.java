@@ -22,7 +22,11 @@ import ru.repositories.EventRepository;
 import ru.repositories.LocationRepository;
 import ru.repositories.UserRepository;
 
+import javax.validation.ValidationException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,6 +35,7 @@ import java.util.stream.Stream;
 @Repository
 @AllArgsConstructor
 public class EventServiceImpl implements EventService {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final EventRepository eventRepository;
     private final CategoryRepository categoryRepository;
     private final LocationRepository locationRepository;
@@ -38,18 +43,26 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventShortDto> getEvents(String text, List<Long> categoryIds, Boolean paid,
-                                         LocalDateTime rangeStart, LocalDateTime rangeEnd,
+                                         String rangeStart, String rangeEnd,
                                          boolean onlyAvailable, Sort sort, int from, int size) {
 
-        Pageable pageable = PageRequest.of(from, size);
-        Stream<Event> stream = eventRepository.getPublicEvents(State.PUBLISHED, pageable).stream()
+        LocalDateTime start = decodeString(rangeStart);
+        LocalDateTime end = decodeString(rangeEnd);
+
+
+        if (start != null && end != null && start.isAfter(end))
+            throw new ValidationException();
+
+        Stream<Event> stream = eventRepository.getPublicEvents(State.PUBLISHED).stream()
                 .filter(e -> !onlyAvailable || e.getParticipantLimit() > e.getConfirmedRequests())
-                .filter(e -> paid != null && paid == e.isPaid())
-                .filter(e -> text != null && (e.getAnnotation().toLowerCase().contains(text.toLowerCase())
+                .filter(e -> paid == null || paid == e.isPaid())
+                .filter(e -> text == null || (e.getAnnotation().toLowerCase().contains(text.toLowerCase())
                         || e.getDescription().toLowerCase().contains(text.toLowerCase())))
-                .filter(e -> categoryIds != null && categoryIds.contains(e.getCategory().getId()))
-                .filter(e -> rangeStart != null && e.getEventDate().isAfter(rangeStart))
-                .filter(e -> rangeEnd != null && e.getEventDate().isBefore(rangeEnd));
+                .filter(e -> categoryIds == null || categoryIds.contains(e.getCategory().getId()))
+                .filter(e -> start == null || e.getEventDate().isAfter(start))
+                .filter(e -> end == null || e.getEventDate().isBefore(end))
+                .skip(from)
+                .limit(size);
 
         if (sort == Sort.EVENT_DATE)
             stream = stream.sorted(Comparator.comparing(Event::getEventDate));
@@ -61,22 +74,31 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEventById(long eventId) throws NotFoundException {
-        if (!eventRepository.existsById(eventId))
+        if (!eventRepository.existsById(eventId)
+                || eventRepository.getReferenceById(eventId).getState() != State.PUBLISHED)
             throw new NotFoundException("Событие не найдено или недоступно");
-
-        return EventMapper.toEventFullDto(eventRepository.getReferenceById(eventId));
+        Event event = eventRepository.getReferenceById(eventId);
+        event.setViews(event.getViews() + 1);
+        return EventMapper.toEventFullDto(event);
     }
 
     @Override
     public List<EventFullDto> searchEvents(List<Long> userIds, List<State> states, List<Long> categoryIds,
-                                           LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
-        Pageable pageable = PageRequest.of(from, size);
-        return EventMapper.toEventFullDtos(eventRepository.findAll(pageable).stream()
-                .filter(e -> userIds != null && userIds.contains(e.getInitiator().getId()))
-                .filter(e -> states != null && states.contains(e.getState()))
-                .filter(e -> categoryIds != null && categoryIds.contains(e.getCategory().getId()))
-                .filter(e -> rangeStart != null && e.getEventDate().isAfter(rangeStart))
-                .filter(e -> rangeEnd != null && e.getEventDate().isBefore(rangeEnd))
+                                           String rangeStart, String rangeEnd, int from, int size) {
+        LocalDateTime start = decodeString(rangeStart);
+        LocalDateTime end = decodeString(rangeEnd);
+
+        if (start != null && end != null && start.isAfter(end))
+            throw new ValidationException();
+
+        return EventMapper.toEventFullDtos(eventRepository.findAll().stream()
+                .filter(e -> userIds == null || userIds.contains(e.getInitiator().getId()))
+                .filter(e -> states == null || states.contains(e.getState()))
+                .filter(e -> categoryIds == null || categoryIds.contains(e.getCategory().getId()))
+                .filter(e -> start == null || e.getEventDate().isAfter(start))
+                .filter(e -> end == null || e.getEventDate().isBefore(end))
+                .skip(from)
+                .limit(size)
                 .collect(Collectors.toList()));
 
     }
@@ -113,8 +135,8 @@ public class EventServiceImpl implements EventService {
             event.setLocation(location);
 
         }
-        if (request.isPaid() != event.isPaid())
-            event.setPaid(request.isPaid());
+        if (request.getPaid() != null)
+            event.setPaid(request.getPaid());
         if (request.getParticipantLimit() != 0 && request.getParticipantLimit() != event.getParticipantLimit())
             event.setParticipantLimit(request.getParticipantLimit());
         if (request.getTitle() != null)
@@ -163,7 +185,7 @@ public class EventServiceImpl implements EventService {
 
         Event event = eventRepository.getReferenceById(eventId);
 
-        if (!(request.getStateAction() == StateAction.CANCEL_REVIEW || event.isRequestModeration()))
+        if (event.getState() == State.PUBLISHED || !request.isRequestModeration())
             throw new ConflictException("Изменить можно только отмененные события или события в состоянии ожидания модерации");
 
         if (request.getAnnotation() != null)
@@ -181,12 +203,21 @@ public class EventServiceImpl implements EventService {
             locationRepository.save(location);
             event.setLocation(location);
         }
-        if (request.isRequestModeration() != event.isRequestModeration())
-            event.setRequestModeration(request.isRequestModeration());
         if (request.getTitle() != null)
             event.setTitle(request.getTitle());
         event.setState(request.getStateAction() == StateAction.PUBLISH_EVENT ? State.PUBLISHED : State.CANCELED);
+        if (request.getStateAction() == StateAction.SEND_TO_REVIEW)
+            event.setState(State.PENDING);
 
         return EventMapper.toEventFullDto(event);
+    }
+
+    private LocalDateTime decodeString(String date) {
+        if (date != null) {
+            date = URLDecoder.decode(date, StandardCharsets.UTF_8);
+            return LocalDateTime.parse(date, FORMATTER);
+        } else {
+            return null;
+        }
     }
 }

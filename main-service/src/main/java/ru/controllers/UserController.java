@@ -1,5 +1,6 @@
 package ru.controllers;
 
+import dtos.main.request.NewUserRequest;
 import dtos.main.user.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.services.user.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -22,8 +24,8 @@ public class UserController {
     }
 
     @PostMapping("/admin/users")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto) {
-        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+    public ResponseEntity<UserDto> createUser(@Valid @RequestBody NewUserRequest newUserRequest) {
+        return new ResponseEntity<>(userService.createUser(newUserRequest), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/admin/users/{userId}")
