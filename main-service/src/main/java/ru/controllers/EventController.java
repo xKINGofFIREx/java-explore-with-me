@@ -4,8 +4,6 @@ import dtos.main.State;
 import dtos.main.event.EventFullDto;
 import dtos.main.event.EventShortDto;
 import dtos.main.event.NewEventDto;
-import dtos.main.request.EventRequestStatusUpdateRequest;
-import dtos.main.request.ParticipationRequestDto;
 import dtos.main.request.UpdateEventAdminRequest;
 import dtos.main.request.UpdateEventUserRequest;
 import lombok.AllArgsConstructor;

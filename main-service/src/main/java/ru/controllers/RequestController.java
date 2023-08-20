@@ -25,13 +25,13 @@ public class RequestController {
 
     @PostMapping("/users/{userId}/requests")
     public ResponseEntity<ParticipationRequestDto> createUserRequest(@PathVariable("userId") long userId,
-                                                    @RequestParam("eventId") long eventId) throws ConflictException {
+                                                                     @RequestParam("eventId") long eventId) throws ConflictException {
         return new ResponseEntity<>(requestService.createUserRequest(userId, eventId), HttpStatus.CREATED);
     }
 
     @PatchMapping("/users/{userId}/requests/{requestId}/cancel")
     public ResponseEntity<ParticipationRequestDto> cancelUserRequest(@PathVariable("userId") long userId,
-                                  @PathVariable("requestId") long requestId) throws NotFoundException, ConflictException {
+                                                                     @PathVariable("requestId") long requestId) throws NotFoundException, ConflictException {
         return new ResponseEntity<>(requestService.cancelUserRequest(userId, requestId), HttpStatus.OK);
     }
 

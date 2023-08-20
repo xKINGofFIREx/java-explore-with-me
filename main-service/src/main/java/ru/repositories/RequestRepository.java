@@ -4,7 +4,6 @@ import dtos.main.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.mappers.RequestMapper;
 import ru.models.Request;
 
 import java.util.List;
@@ -21,5 +20,5 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     List<Request> findAllByRequestsIds(@Param("ids") List<Long> ids);
 
     @Query("select count(r) from Request r where r.status = :status and r.id in :ids")
-    long getRequestsCountByStatusAndIds(@Param("status")Status status, List<Long> ids);
+    long getRequestsCountByStatusAndIds(@Param("status") Status status, List<Long> ids);
 }
