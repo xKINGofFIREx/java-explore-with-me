@@ -49,20 +49,13 @@ public class EventServiceImpl implements EventService {
         LocalDateTime start = decodeString(rangeStart);
         LocalDateTime end = decodeString(rangeEnd);
 
-
+        Pageable pageable = PageRequest.of(from, size);
         if (start != null && end != null && start.isAfter(end))
             throw new ValidationException();
 
-        Stream<Event> stream = eventRepository.getPublicEvents(State.PUBLISHED).stream()
-                .filter(e -> !onlyAvailable || e.getParticipantLimit() > e.getConfirmedRequests())
-                .filter(e -> paid == null || paid == e.isPaid())
-                .filter(e -> text == null || (e.getAnnotation().toLowerCase().contains(text.toLowerCase())
-                        || e.getDescription().toLowerCase().contains(text.toLowerCase())))
-                .filter(e -> categoryIds == null || categoryIds.contains(e.getCategory().getId()))
-                .filter(e -> start == null || e.getEventDate().isAfter(start))
-                .filter(e -> end == null || e.getEventDate().isBefore(end))
-                .skip(from)
-                .limit(size);
+        Stream<Event> stream = eventRepository.getPublicEvents(State.PUBLISHED, pageable,
+                onlyAvailable, paid, text, categoryIds, start, end).stream();
+
 
         if (sort == Sort.EVENT_DATE)
             stream = stream.sorted(Comparator.comparing(Event::getEventDate));
@@ -88,18 +81,12 @@ public class EventServiceImpl implements EventService {
         LocalDateTime start = decodeString(rangeStart);
         LocalDateTime end = decodeString(rangeEnd);
 
+        Pageable pageable = PageRequest.of(from, size);
         if (start != null && end != null && start.isAfter(end))
             throw new ValidationException();
 
-        return EventMapper.toEventFullDtos(eventRepository.findAll().stream()
-                .filter(e -> userIds == null || userIds.contains(e.getInitiator().getId()))
-                .filter(e -> states == null || states.contains(e.getState()))
-                .filter(e -> categoryIds == null || categoryIds.contains(e.getCategory().getId()))
-                .filter(e -> start == null || e.getEventDate().isAfter(start))
-                .filter(e -> end == null || e.getEventDate().isBefore(end))
-                .skip(from)
-                .limit(size)
-                .collect(Collectors.toList()));
+        return EventMapper.toEventFullDtos(eventRepository.getAdminEvents(pageable,
+                userIds, states, categoryIds, start, end).toList());
 
     }
 
