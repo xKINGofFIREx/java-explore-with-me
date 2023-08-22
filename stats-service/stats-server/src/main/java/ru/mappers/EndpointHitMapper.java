@@ -1,6 +1,6 @@
 package ru.mappers;
 
-import dtos.EndpointHitDto;
+import dtos.stats.EndpointHitDto;
 import ru.models.EndpointHit;
 
 public class EndpointHitMapper {

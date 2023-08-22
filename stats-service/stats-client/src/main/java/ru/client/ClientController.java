@@ -1,7 +1,8 @@
 package ru.client;
 
-import dtos.EndpointHitDto;
+import dtos.stats.EndpointHitDto;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,7 +15,7 @@ public class ClientController {
 
     @PostMapping("/hit")
     public ResponseEntity<Object> saveHit(@RequestBody EndpointHitDto hitDto) {
-        return baseClient.saveHit(hitDto);
+        return new ResponseEntity<>(baseClient.saveHit(hitDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/stats")

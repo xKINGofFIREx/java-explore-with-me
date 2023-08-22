@@ -1,7 +1,7 @@
 package ru.services;
 
-import dtos.EndpointHitDto;
-import dtos.ViewStatsDto;
+import dtos.stats.EndpointHitDto;
+import dtos.stats.ViewStatsDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
