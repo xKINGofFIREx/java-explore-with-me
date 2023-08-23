@@ -43,10 +43,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteCommentUser(long userId, long commentId) throws NotFoundException, ConflictException {
-        if (userRepository.existsById(userId))
+        if (!userRepository.existsById(userId))
             throw new NotFoundException("Пользователь не найден");
 
-        if (commentRepository.existsById(commentId))
+        if (!commentRepository.existsById(commentId))
             throw new NotFoundException("Комментарий не найден");
 
         if (commentRepository.getReferenceById(commentId).getUser().getId() != userId)
@@ -56,17 +56,17 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public void deleteCommentAdmin(long commentId) throws NotFoundException {
-        if (commentRepository.existsById(commentId))
+        if (!commentRepository.existsById(commentId))
             throw new NotFoundException("Комментарий не найден");
 
         commentRepository.deleteById(commentId);
     }
 
     private Comment checkCommentDto(long userId, long eventId, CommentDto commentDto) throws NotFoundException {
-        if (userRepository.existsById(userId))
+        if (!userRepository.existsById(userId))
             throw new NotFoundException("Пользователь не найден");
 
-        if (eventRepository.existsById(eventId))
+        if (!eventRepository.existsById(eventId))
             throw new NotFoundException("События не найдено");
 
         Comment comment = CommentMapper.toComment(commentDto);
