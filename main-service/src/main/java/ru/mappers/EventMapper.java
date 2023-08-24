@@ -7,8 +7,8 @@ import dtos.main.event.NewEventDto;
 import ru.models.Event;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class EventMapper {
 
@@ -27,10 +27,7 @@ public class EventMapper {
     }
 
     public static List<EventShortDto> toEventShortDtos(List<Event> events) {
-        List<EventShortDto> eventShortDtos = new ArrayList<>();
-        for (Event event : events)
-            eventShortDtos.add(EventMapper.toEventShortDto(event));
-        return eventShortDtos;
+        return events.stream().map(EventMapper::toEventShortDto).collect(Collectors.toList());
     }
 
     public static EventFullDto toEventFullDto(Event event) {
@@ -55,10 +52,7 @@ public class EventMapper {
     }
 
     public static List<EventFullDto> toEventFullDtos(List<Event> events) {
-        List<EventFullDto> eventFullDtos = new ArrayList<>();
-        for (Event event : events)
-            eventFullDtos.add(EventMapper.toEventFullDto(event));
-        return eventFullDtos;
+        return events.stream().map(EventMapper::toEventFullDto).collect(Collectors.toList());
     }
 
     public static Event toEventFromNewEventDto(NewEventDto newEventDto) {

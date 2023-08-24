@@ -4,8 +4,8 @@ import dtos.main.category.CategoryDto;
 import dtos.main.category.NewCategoryDto;
 import ru.models.Category;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CategoryMapper {
 
@@ -22,9 +22,6 @@ public class CategoryMapper {
     }
 
     public static List<CategoryDto> toCategoryDtos(List<Category> categories) {
-        List<CategoryDto> categoryDtos = new ArrayList<>();
-        for (Category category : categories)
-            categoryDtos.add(CategoryMapper.toCategoryDto(category));
-        return categoryDtos;
+        return categories.stream().map(CategoryMapper::toCategoryDto).collect(Collectors.toList());
     }
 }
