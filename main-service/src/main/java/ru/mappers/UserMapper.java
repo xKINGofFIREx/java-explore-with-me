@@ -5,8 +5,8 @@ import dtos.main.user.UserDto;
 import dtos.main.user.UserShortDto;
 import ru.models.User;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserMapper {
 
@@ -31,9 +31,6 @@ public class UserMapper {
     }
 
     public static List<UserDto> toUserDtos(List<User> users) {
-        List<UserDto> userDtos = new ArrayList<>();
-        for (User user : users)
-            userDtos.add(toUserDto(user));
-        return userDtos;
+        return users.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 }

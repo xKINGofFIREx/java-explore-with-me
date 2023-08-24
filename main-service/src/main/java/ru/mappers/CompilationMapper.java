@@ -6,6 +6,7 @@ import ru.models.Compilation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CompilationMapper {
 
@@ -28,9 +29,6 @@ public class CompilationMapper {
     }
 
     public static List<CompilationDto> toCompilationDtos(List<Compilation> compilations) {
-        List<CompilationDto> compilationDtos = new ArrayList<>();
-        for (Compilation compilation : compilations)
-            compilationDtos.add(CompilationMapper.toCompilationDto(compilation));
-        return compilationDtos;
+        return compilations.stream().map(CompilationMapper::toCompilationDto).collect(Collectors.toList());
     }
 }
